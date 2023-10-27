@@ -32,12 +32,12 @@ exports.isSeller = async(req,res, next) => {
         if(req.user.accountType !== "Seller"){
             return res.status(401).json({
                 success:false,
-                message:"This is protected route for Seller only",
+                message:"Only Seller account is allowed to access this route",
             });  
-        next();
         }
+        next();
     }catch(err){
-
+        console.log("")
     }
 }
 
@@ -48,8 +48,8 @@ exports.isCustomer = async(req,res,next) => {
                 success:false,
                 message:"This is protected route for Customer only",
             });  
-        next();
         }
+        next();
     }catch(err){
 
     }

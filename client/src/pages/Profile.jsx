@@ -1,10 +1,15 @@
 import React from 'react'
+import {useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 import { API_BASE } from '../constants/data';
 import { toast } from "react-hot-toast";
+import {BiLogOutCircle} from "react-icons/bi"
+
 
 export const Profile = () => {
+
+   const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         DOB: '',
@@ -39,6 +44,16 @@ export const Profile = () => {
 
       const deleteHandler = async() => {
 
+      }
+
+      const LogoutHandler = async() => {
+        try{
+          const res = await axios.get(`${API_BASE}/logout`);
+          toast.promise(res.response.data.message);
+          navigate('/login')
+        }catch(err){
+            toast.error(err.response.data.message);
+        }
       }
 
 
@@ -100,7 +115,20 @@ export const Profile = () => {
           >
             Update Profile
           </button>
+
+          <button
+            onClick={()=>navigate('/yourProducts')}
+            className="bg-green-500  hover:bg-green-600 w-full py-2 mt-5 text-white rounded-lg"
+          >
+           Your Items
+          </button>
+
         </form>
+
+        
+
+        <BiLogOutCircle onClick={LogoutHandler} className="text-slate-800 text-4xl cursor-pointer" />
+
 
         <button
             type="submit"

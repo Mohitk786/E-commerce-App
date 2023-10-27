@@ -23,13 +23,10 @@ const itemSchema = new mongoose.Schema({
         required:true,
     },
     category:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Category",
+        type:String,
+        enum: ["Machine", "Accessory"],
+        required:[true, "Please select a category"],
     },
-    // tag:{
-    //     type:[String],
-    //     required:true,
-    // },
     thumbnail:{
         type:String,
         required:[true, "please upload the image of your item"],

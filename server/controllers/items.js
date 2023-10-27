@@ -1,89 +1,81 @@
-const User = require("../models/User");
+const {User} = require("../models/User");
 const Item = require("../models/Item");
 const Category = require("../models/Category");
-// const Category = require("../models/Profile");
+const {uploadImageToCloudinary} = require("../utils/imageUploader")
 
-exports.addItem = async(req,res)=>{
-    try{
-        const {itemName,itemDescription,seller, price, category} = req.body;
-        if(itemName || !itemDescription || !seller || !price || !category){
+
+exports.addItem = async (req, res) => {
+    try {
+        const { itemName, itemDescription, price, category } = req.body;
+        if (!itemName || !itemDescription || !price || !category) {
             return res.status(400).json({
-                success:false,
-                message:"All fields are required",
+                success: false,
+                message: "All fields are required",
             });
         }
 
         const thumbnail = req.files.thumbnail;
         const userId = req.user.id;
 
-        // chechk if given category is valid or not
-        const categoryDetails = await Category.findById(category)
-        if(!categoryDetails){
+
+        // Fetch seller details by some conditions (e.g., by user ID)
+        const sellerDetails = await User.findOne({ _id: userId });
+
+        if (!sellerDetails) {
             return res.status(404).json({
-                success:false,
-                message:"Category Details not found",
-            })
+                success: false,
+                message: "Seller Details not found, No such seller account exists",
+            });
         }
 
-        const sellerDetails = await User.findById(userId);
-
-        if(!sellerDetails){
-            return res.status(404).json({
-                success:false,
-                message:"Seller Details not found, No such seller account exist",
-            })
-        }
-
-
-        //upload the thumbnail image to cloudinary
+        // Upload the thumbnail image to cloudinary
         const thumbnailImage = await uploadImageToCloudinary(thumbnail, process.env.FOLDER_NAME);
-        const item = await itemDescription.create({
+
+        // Create the item
+        const item = await Item.create({
             itemName,
             itemDescription,
-            seller : sellerDetails._id,
+            seller: userId || sellerDetails._id,
+            category : category,
             price,
-            category : categoryDetails,
-            thumbnail : thumbnailImage.secure_url
-
+            thumbnail: thumbnailImage.secure_url || thumbnailImage.url
         });
 
-        // push the id of item into seller
+
+        // Push the ID of the item into the seller's items array
         await User.findByIdAndUpdate(
-            {_id:  sellerDetails._id},
+            { _id: sellerDetails._id },
             {
-                $push:{
-                    items: item._id
+                $push: {
+                    yourProducts: item._id // Assuming 'yourProducts' is the field for a seller's products
                 },
             },
-            {new:true}
-        )
+            { new: true }
+        );
 
-        return  res.status(200).json({
-            success:true,
-            message:"Course created successfully",
-            data:newCourse,
-        })
-
-    }catch(err){
+        return res.status(200).json({
+            success: true,
+            message: "Item created successfully",
+            data: item, // Use the 'item' variable
+        });
+    } catch (err) {
         console.log(`Error in adding items ${err.message}`);
         return res.status(400).json({
-            success:false,
-            message:`Error aa gaya jii ${err.message}`
-        })
+            success: false,
+            message: `Error occurred: ${err.message}`
+        });
     }
 }
 
+
 exports.showAllItems = async(req,res) => {
     try{
-        const allItems = await Item.find({},{itemName:true,
-                                            price:true,
-                                            seller:true,
-                                            }).populate("seller").exec();
+        const allItems = await Item.find({}).populate("seller").exec();
             
         return res.status(200).json({
             success:true,
             message:"Data for all items fetched Successfully",
-            data:allCourse, 
+            data:allItems, 
         })
         
     }catch(err){
@@ -106,7 +98,7 @@ exports.itemDetail = async(req,res) => {
         if(!itemDetails){
             return res.status(400).json({
                 success:false,
-                message:`Could not find the item with ${courseId}`,
+                message:`Could not find the item with ${itemId}`,
             })
         }
         return res.status(200).json({
@@ -141,6 +133,35 @@ exports.removeItem = async(req,res) => {
         return res.status(400).json({
             success:false,
             message:`error while trying to remove item ${err.message}`
+        })
+    }
+}
+
+
+exports.getFilteredItem = async(req,res) => {
+    try{
+        const {category} = req.params;
+        console.log("printing category");
+        if(!category){
+            return res.status(400).json({
+                success:false,
+                message:`No Category exist`
+            })
+        }
+
+        const items = await Item.find({category:category});
+
+        return res.status(200).json({
+            success:true,
+            message:`data fetched successfully`
+        })
+
+
+
+    }catch(err){
+        return res.status(400).json({
+            success:false,
+            message:`Check your network connection${err.message}`
         })
     }
 }

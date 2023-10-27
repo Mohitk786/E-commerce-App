@@ -1,25 +1,17 @@
-import axios from "axios";
-import {FaShoppingCart} from "react-icons/fa"
+import {FaShoppingCart} from "react-icons/fa";
+import {BiSearch, BiUserCircle} from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { API_BASE } from "../constants/data";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
+import {BiLogInCircle} from "react-icons/bi"
+
 
 const Navbar = () => {
 
   const navigate = useNavigate();
   const {cart} = useSelector((state) => state);
 
-  const LogoutHandler = async() => {
-    try{
-      const res = await axios.put(`${API_BASE}/logout`);
-      toast.Promise(res.response.data.message);
-      navigate('/login')
-    }catch(err){
-        toast.error(err.response.data.message);
-    }
-  }
+ 
 
   return (
     <div>
@@ -31,14 +23,21 @@ const Navbar = () => {
           </div>
         </NavLink>
 
-        <div className="flex items-center font-medium text-slate-100 mr-5 space-x-6">
-            <NavLink to="/">
-              <p>Home</p>
-            </NavLink>
+        <div className="flex flex-row items-center font-medium text-slate-100 mr-5 space-x-6">
+            <NavLink to="/"><p className=" text-slate-800 hover:text-slate-950 font-bold">Machines</p></NavLink>
+            <NavLink to="/"><p className=" text-slate-800 hover:text-slate-950 font-bold">Accessories</p></NavLink>
+            <NavLink to="/"><p className=" text-slate-800 hover:text-slate-950 font-bold">Shop All</p></NavLink>
+            <NavLink to="/"><p className=" text-slate-800 hover:text-slate-950 font-bold">Sale</p></NavLink>
 
+          </div>
+
+          
+          <div className=" flex justify-around text-slate-100 w-[10%] cursor-pointer">
+            <BiUserCircle className="text-slate-800 text-2xl" onClick={()=>navigate("/profile")}/>
+            <BiSearch className="text-slate-800 text-2xl"/>
             <NavLink to="/cart">
               <div className="relative">
-                  <FaShoppingCart className="text-2xl"/>
+                  <FaShoppingCart className="text-2xl text-slate-800"/>
                   {
                     cart.length > 0 &&
                     <span
@@ -46,18 +45,12 @@ const Navbar = () => {
                     justify-center items-center animate-bounce rounded-full text-white" 
                     >{cart.length}</span>
                   }
-                  
               </div>
             </NavLink>
+            <BiLogInCircle onClick={() => navigate('/login')} className="text-slate-800 text-2xl cursor-pointer" />
           </div>
-
-          
-          <div className=" flex justify-around text-slate-100 w-[10%] cursor-pointer">
-            <div onClick={LogoutHandler}>Logout</div>
-          </div>
-
-
       </nav>
+        
     </div>
   )
 };

@@ -54,7 +54,7 @@ const userSchmea = new mongoose.Schema({
 
 });
 
-const User = module.exports = mongoose.model("User", userSchmea);
+const User = mongoose.model("User", userSchmea);
 
 const validate = (user) => {
 
@@ -72,5 +72,5 @@ const validate = (user) => {
     
     module.exports = {
         User,
-        validate,
-    };
+        validate
+    }
