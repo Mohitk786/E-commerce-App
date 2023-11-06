@@ -1,30 +1,32 @@
-const User = require("../models/User");
+const {User} = require("../models/User");
 const Profile = require("../models/Profile");
 
 
 exports.createProfile = async (req,res) => {
     try{
 
+        const image = req.file;
         const {DOB,MoNumber,about,gender} = req.body;
 
-        const profile = new Profile({
+
+        const userId = req.user.id;
+        const user = await User.findById({_id:userId});
+
+        //Update Profile
+        const ProfileId = user.additionalDetails;
+        const profile = await Profile.findByIdAndUpdate({_id:ProfileId},{
             DOB:DOB,
             MoNumber:MoNumber,
             about:about,
             gender:gender,
-        }).save();
-
-        // find the user and update additional details in User
-        const userId = req.user.id;
-        console.log("printing Id", userId);
-
-        const user = await User.findByIdAndUpdate({_id:userId},{
-                    $push:{
-                        additionalDetails:profile._id
-                    },
-                }, {new:true}
-        )
-
+        })
+        
+   
+        //update user
+        user.additionalDetails = ProfileId;
+        await user.save();
+        
+        
         return res.status(200).json({
             succss:true,
             message:"Profile updated successfully",
@@ -33,7 +35,7 @@ exports.createProfile = async (req,res) => {
     }catch(err){
         return res.status(400).json({
             succss:false,
-            message:"failed to updated Profile",
+            message:`failed to updated Profile, ${err.message}`,
         })
     }
 }

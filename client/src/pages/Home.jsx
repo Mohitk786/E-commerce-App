@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import Spinner from "../components/Spinner";
-import Product from "../components/Product";
-import imageLady from "../assets/homepageLady.webp";
-import grinder1 from "../assets/grinder1.webp";
-import grinder2 from "../assets/grinder2.webp";
-import grinder3 from "../assets/grinder3.webp";
+// import Spinner from "../components/Spinner";
+// import Product from "../components/Product";
+import imageLady from "../assets/machines/homepageLady.webp";
+import grinder1 from "../assets/machines/grinder1.webp";
+import grinder2 from "../assets/machines/grinder2.webp";
+import grinder3 from "../assets/machines/grinder3.webp";
 import Card from "../components/Card";
-import routine from "../assets/routine.webp";
-import taste from "../assets/taset.webp";
-import EnjoyLife from "../assets/enjoy life.webp"
-import compare from "../assets/compare.webp"
+import routine from "../assets/machines/routine.webp";
+import taste from "../assets/machines/taset.webp";
+import EnjoyLife from "../assets/machines/enjoy life.webp"
+import compare from "../assets/machines/compare.webp"
 
 const Home = () => {
   const API_URL = "https://fakestoreapi.com/products";
@@ -75,9 +75,9 @@ const Home = () => {
               <p className="leading-6 text-center">Every Ratio machine is inspired by the beautiful ritual of manual brewing, often called <br />pour over. Many of us love the taste of pour over but not the attention to detail and <br /> precision required for a consistent result. Enter Ratio.</p>
           </div>
           <div className="flex gap-3">
-            <Card image = {grinder1} name={"Ration Six"} des={"SCA AWARD WINNER"} btnText={"Shop Six"}/>
-            <Card image = {grinder2} name={"Shop Eight"} des={"OUR BEST-SELLING ORIGINAL"} btnText={"Shop Eight"}/>
-            <Card image = {grinder3} name={"Ratio Eight Thermal Set"} des={"THE COMPLETE PACKAGE"} btnText={"Shop Thermal Set"}/>
+            <Card thumbnail = {grinder1} itemName={"Ration Six"} itemDescription={"SCA AWARD WINNER"} btnText={"Shop Six"}/>
+            <Card thumbnail = {grinder2} itemName={"Shop Eight"} itemDescription={"OUR BEST-SELLING ORIGINAL"} btnText={"Shop Eight"}/>
+            <Card thumbnail = {grinder3} itemName={"Ratio Eight Thermal Set"} itemDescription={"THE COMPLETE PACKAGE"} btnText={"Shop Thermal Set"}/>
           </div>
       </div>
 
@@ -98,9 +98,9 @@ const Home = () => {
           <p className="text-slate-800 font-extrabold text-3xl">The best part of your day just got better.</p>
         </div>
         <div className="flex gap-3">
-            <Card image = {routine} name={"Ration Six"} des={"SCA AWARD WINNER"} btnText={"Shop Six"}/>
-            <Card image = {taste} name={"Shop Eight"} des={"OUR BEST-SELLING ORIGINAL"} btnText={"Shop Eight"}/>
-            <Card image = {EnjoyLife} name={"Ratio Eight Thermal Set"} des={"THE COMPLETE PACKAGE"} btnText={"Shop Thermal Set"}/>
+            <Card thumbnail = {routine} itemName={"Ration Six"} itemDescription={"SCA AWARD WINNER"} btnText={"Shop Six"}/>
+            <Card thumbnail = {taste} itemName={"Shop Eight"} itemDescription={"OUR BEST-SELLING ORIGINAL"} btnText={"Shop Eight"}/>
+            <Card thumbnail = {EnjoyLife} itemName={"Ratio Eight Thermal Set"} itemDescription={"THE COMPLETE PACKAGE"} btnText={"Shop Thermal Set"}/>
           </div>
       </div>
     </div>

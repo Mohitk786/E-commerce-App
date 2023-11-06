@@ -2,24 +2,26 @@ const jwt = require("jsonwebtoken");
 
 exports.auth = async(req,res,next) => {
     
-    const token =  req.cookies.access_card || req.body.token;
+    const _ACCESSCARD = await req.cookies._ACCESSCARD  || req.body.token;
 
-    if(!token){
+    
+
+    if(!_ACCESSCARD){
         return res.status(400).json({
             success:false,
-            message:"token 1 is missing"
+            message:"session expired"
         })
     }
 
     try{
-        //decode the token
-        const decode = jwt.verify(token, process.env.JWT_SECRET);
+        //decode the access_card
+        const decode = jwt.verify(_ACCESSCARD, process.env.JWT_SECRET);
         req.user = decode;
 
     }catch(err){
         return res.status(400).json({
             success:false,
-            message:"token is invalid",
+            message:"Something went wrong try logging againg !",
         });
     }
     

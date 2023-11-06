@@ -4,9 +4,13 @@ const Category = require("../models/Category");
 const {uploadImageToCloudinary} = require("../utils/imageUploader")
 
 
+
+
 exports.addItem = async (req, res) => {
     try {
-        const { itemName, itemDescription, price, category } = req.body;
+
+        const { itemName, itemDescription, price, category, thumbnail} = req.body;
+        
         if (!itemName || !itemDescription || !price || !category) {
             return res.status(400).json({
                 success: false,
@@ -14,11 +18,18 @@ exports.addItem = async (req, res) => {
             });
         }
 
-        const thumbnail = req.files.thumbnail;
+
+        // Check if a file was uploaded
+        if (!thumbnail) {
+            return res.status(400).json({
+                success: false,
+                message: "No image uploaded",
+            });
+        }
+
         const userId = req.user.id;
 
-
-        // Fetch seller details by some conditions (e.g., by user ID)
+        // Fetch seller details by user ID
         const sellerDetails = await User.findOne({ _id: userId });
 
         if (!sellerDetails) {
@@ -28,26 +39,27 @@ exports.addItem = async (req, res) => {
             });
         }
 
-        // Upload the thumbnail image to cloudinary
+
+        // Upload the thumbnail image to Cloudinary
         const thumbnailImage = await uploadImageToCloudinary(thumbnail, process.env.FOLDER_NAME);
 
         // Create the item
         const item = await Item.create({
             itemName,
             itemDescription,
-            seller: userId || sellerDetails._id,
-            category : category,
+            seller: userId,
+            category,
             price,
-            thumbnail: thumbnailImage.secure_url || thumbnailImage.url
+            thumbnail: thumbnailImage.secure_url || thumbnailImage.url,
         });
 
 
         // Push the ID of the item into the seller's items array
-        await User.findByIdAndUpdate(
+        const updatedSeller = await User.findByIdAndUpdate(
             { _id: sellerDetails._id },
             {
                 $push: {
-                    yourProducts: item._id // Assuming 'yourProducts' is the field for a seller's products
+                    yourProducts: item._id,
                 },
             },
             { new: true }
@@ -56,26 +68,30 @@ exports.addItem = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Item created successfully",
-            data: item, // Use the 'item' variable
+            item,
         });
+
     } catch (err) {
-        console.log(`Error in adding items ${err.message}`);
-        return res.status(400).json({
+        console.log(`Error in adding items: ${err.message}`);
+        return res.status(500).json({
             success: false,
             message: `Error occurred: ${err.message}`
         });
     }
-}
+};
 
 
 exports.showAllItems = async(req,res) => {
     try{
-        const allItems = await Item.find({}).populate("seller").exec();
-            
+        
+        const machines =  await Item.find({category:"Machine"}).populate("seller").exec();
+        const accessory = await Item.find({category:"Accessory"}).populate("seller").exec();
+
+
         return res.status(200).json({
             success:true,
             message:"Data for all items fetched Successfully",
-            data:allItems, 
+            data : [machines, accessory]
         })
         
     }catch(err){
@@ -141,7 +157,6 @@ exports.removeItem = async(req,res) => {
 exports.getFilteredItem = async(req,res) => {
     try{
         const {category} = req.params;
-        console.log("printing category");
         if(!category){
             return res.status(400).json({
                 success:false,
@@ -149,19 +164,46 @@ exports.getFilteredItem = async(req,res) => {
             })
         }
 
-        const items = await Item.find({category:category});
+
+        //search for Data in DB
+        let items;
+        if(category == "Shop All" || category == "Sale"){
+            items = await Item.find({});
+        }
+        else{       
+            items = await Item.find({category:category})
+        }
 
         return res.status(200).json({
             success:true,
-            message:`data fetched successfully`
+            message:`data fetched successfully`,
+            items
         })
+        
+    }catch(err){
+        return res.status(400).json({
+            success:false,
+            message:`Check your network connection${err.message}`,
+        })
+    }
+}
+
+exports.getItemDetails = async(req,res) => {
+    try{
+        const {productId} = req.params;
+
+        const product = await Item.findById(productId);
 
 
+        return res.status(200).json({
+            success:true,
+            product,
+        })
 
     }catch(err){
         return res.status(400).json({
             success:false,
-            message:`Check your network connection${err.message}`
+            message:err.message
         })
     }
 }

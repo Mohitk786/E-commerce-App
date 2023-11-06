@@ -8,6 +8,9 @@ import { SignUp } from "./pages/SignUp";
 import { Profile } from "./pages/Profile";
 import AddProduct from "./pages/AddProduct";
 import SellerItems from "./pages/sellerItems";
+import { ItemListing } from "./pages/ItemListing";
+import ProductDetails from "./pages/ProductDetails";
+
 
 const App = () => {
   return (<div>
@@ -23,8 +26,9 @@ const App = () => {
             <Route path='/profile' element={<Profile/>} />
             <Route path="/addProduct" element={<AddProduct/>} />
             <Route path="/yourProducts" element={<SellerItems/>} />
+            <Route path="/listItems"  element={<ItemListing/>} />
+            <Route path='/productDetails' element={<ProductDetails/>} />
           </Routes>
-
         </div>
       )
 };

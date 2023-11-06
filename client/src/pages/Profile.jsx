@@ -29,10 +29,10 @@ export const Profile = () => {
 
       const updateProfile = async () => {
         try{
-            const res = await axios.post(`${API_BASE}/profile`, formData);
-            toast.success(res.response.data.message);
+            const res = await axios.post(`${API_BASE}/profile`, formData, {withCredentials: true});
+            toast.success(res.data.message);
         }catch(err){
-            toast.error(err.response.data.message);
+            toast.error("Failed to Update Profile",err.message);
         }
       }
 

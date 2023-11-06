@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import CartItem from "../components/CartItem";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
+
+  const navigate = useNavigate();
+
   const { cart } = useSelector((state) => state);
-  console.log("Printing Cart");
-  console.log(cart);
   const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
@@ -45,11 +46,9 @@ const Cart = () => {
           <h1 className="text-gray-700 font-semibold text-xl mb-2">
             Your cart is empty!
           </h1>
-          <Link to={"/"}>
-            <button className="uppercase bg-green-600 hover:bg-purple-50 rounded-lg text-white transition duration-300 ease-linear mt-5 border-2 border-green-600 font-semibold hover:text-green-700 p-3 px-10 tracking-wider">
+            <button onClick={()=>navigate('/')} className="uppercase bg-green-600 hover:bg-purple-50 rounded-lg text-white transition duration-300 ease-linear mt-5 border-2 border-green-600 font-semibold hover:text-green-700 p-3 px-10 tracking-wider">
               Shop Now
             </button>
-          </Link>
         </div>
       )}
     </div>

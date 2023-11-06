@@ -84,7 +84,7 @@ export const SignUp = () => {
           </label>
           <select
             onChange={changeHandler}
-            name="role"
+            name="accountType"
             id="Role"
             value={formData.role}
             className="w-full p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"

@@ -20,6 +20,7 @@ const Machine = () => {
         fetchMachines();
     },[allMachines]);
 
+
   return (
     <div>
             <div>
@@ -29,8 +30,8 @@ const Machine = () => {
             <div>
                 <div>
                     {
-                        allMachines.map((machine)=> (
-                            <MachineListing {...machine}/>
+                        allMachines.map((index, machine)=> (
+                            <MachineListing key={index} {...machine}/>
                         ))
                     }
                 </div>

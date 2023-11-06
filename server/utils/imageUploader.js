@@ -1,15 +1,21 @@
 const cloudinary = require('cloudinary').v2;
 
-exports.uploadImageToCloudinary = async (file,folder,height,quality) => {
-    const options = {folder};
-    if(height){
-        options.height = height;
-    }
-    if(quality){
-        options.quality = quality;
-    }
-        options.resourse_type = "auto";
+exports.uploadImageToCloudinary = async (file,folder) => {
+   
+            const options = {folder,
+            upload_present: `unsigned_upload`,
+            public_id: `postimage`,
+            innerWidth:400,
+            innerHeight:260,
+            allowed_formats :['png','jpg','jpeg','svg', 'ico', 'jfif','webp']
+            };
+       
+            options.resource_type = "auto";
 
 
-        return await cloudinary.uploader.upload(file.tempFilePath, options);
-}
+            let response;
+            await cloudinary.uploader.upload(file, ).then(result => response = result);
+            return response;
+
+        }
+   

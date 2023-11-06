@@ -16,7 +16,8 @@ export const Login = () => {
         const response = await axios.post(`${API_BASE}/login`, {
           email: LoginData.email,
           password: LoginData.password,
-        });
+         
+        }, {withCredentials: true});
   
         const isVerified = response.data.existingUser.verified;
 

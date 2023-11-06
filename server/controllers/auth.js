@@ -116,82 +116,78 @@ exports.VerifyUser = async (req, res) => {
 
 
 
-exports.Login = async(req,res) => {
-    try{
-        const {email, password} = req.body;
-
-        //validation
-        if(!email || !password){ 
-            return res.status(404).json({
-                success:false,
-                message:`All fields are required`,
-            })  
-        }
-
-        //check if user exist or not
-        let existingUser = await User.findOne({email});
-        
-        
-        if( !existingUser ){
-            return res.status(400).json({
-                success:false,
-                message:`User does not exist! SignUp Now`,
-            })
-        }
-        
-        //verify the password
-        if(await bcrypt.compare(password, existingUser.password)){
-            
-            //check if user is verified or not
-            const {verified} = existingUser;
-            if(!verified){
-                return res.status(400).json({
-                    success:false,
-                    message:"Verify your email before login"
-                });
-            }
-
-            const payload = {
-                email: existingUser.email,
-                id:    existingUser._id,
-                accountType:  existingUser.accountType, 
-            }
-
-            let token = jwt.sign(payload, process.env.JWT_SECRET, {
-                    expiresIn:"2h",
-
-                });
-
-            // existingUser = existingUser.toObject();
-            existingUser.token = token;  //add token to user
-            existingUser.password = undefined;
-            // req.body.id = existingUser._id;
-
-            const options = {
-                expires: new Date(Date.now() + 3*24*60*1000),  //cookie validity => 3days
-                httpOnly :true,
-            }
-
-            //creation of cookie => response
-            res.cookie("access_card", token, options).status(200).json({
-                success:true,
-                token,
-                existingUser,
-                message:"user logged in successfully",
-            })
-
-            return;
-            
-        }
+exports.Login = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+  
+      // Validation
+      if (!email || !password) {
         return res.status(400).json({
-            success:false,
-            message:"password is incorrect"
+          success: false,
+          message: "All fields are required",
         });
+      }
+  
+      // Check if the user exists or not
+      let existingUser = await User.findOne({ email });
+  
+      if (!existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: "User does not exist! Sign Up Now",
+        });
+      }
+  
+      // Verify the password
+      const passwordMatch = await bcrypt.compare(password, existingUser.password);
+  
+      if (passwordMatch) {
+        // Check if the user is verified or not
+        const { verified } = existingUser;
+        if (!verified) {
+          return res.status(400).json({
+            success: false,
+            message: "Verify your email before login",
+          });
+        }
+  
+        const payload = {
+          email: existingUser.email,
+          id: existingUser._id,
+          accountType: existingUser.accountType,
+        };
+  
+        let token =  jwt.sign(payload, process.env.JWT_SECRET, {
+          expiresIn: "2h",
+        });
+  
+        // Create options for the cookie
+        const options = {
+          expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), 
+          domain: "localhost"          
+        };
+  
+        // Creation of the cookie and response
+          res.cookie("_ACCESSCARD", token, options).status(200).json({
+          success: true,
+          token,
+          existingUser: { ...existingUser._doc, password: undefined },
+          message: "User logged in successfully",
+        });
+          
+        return;
+      }
+  
+      return res.status(400).json({
+        success: false,
+        message: "Password is incorrect",
+      });
 
-    }catch(err){
-        return res.status(404).json({
-            success:false,
-            message:`failed to login ==> ${err.message}`,
-        })
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        message: `Failed to login => ${err.message}`,
+      });
     }
-}
+  };
+  
