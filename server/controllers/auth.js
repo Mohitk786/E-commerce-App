@@ -4,8 +4,7 @@ const { User, validate } = require("../models/User");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const Profile = require("../models/Profile")
-
+const Profile = require("../models/Profile");
 
 exports.SignUp = async (req, res) => {
     try {

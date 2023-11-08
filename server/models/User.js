@@ -36,10 +36,11 @@ const userSchmea = new mongoose.Schema({
         required:true,
         ref:"Item"
     }],
-    itemsInCart:[{
+    
+    userCart:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Item"
-    }],
+        ref:"Cart"
+    },
     image: {
         type:String,  //image url string type ka hi hoga
         // required:true,

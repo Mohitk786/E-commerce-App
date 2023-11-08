@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { API_BASE } from '../constants/data';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import "./Spinner.css"
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,8 @@ const AddProduct = () => {
     price: '',
     category: 'Machine',
   });
+
+  const [loader, setLoader] = useState(false);
 
  
 
@@ -28,8 +31,6 @@ const AddProduct = () => {
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    // setImageFile(file);
-
     if (file) {
       const reader = new FileReader();
 
@@ -37,7 +38,6 @@ const AddProduct = () => {
         const base64URL = e.target.result;
         setBase64URL(base64URL);
       };
-
       reader.readAsDataURL(file);
     }
   };
@@ -53,6 +53,7 @@ const AddProduct = () => {
     data.append('category', formData.category);
     data.append('thumbnail', base64URL);
 
+    setLoader(true);
     try {
       const response = await axios.post(`${API_BASE}/addProduct`, data, {
         withCredentials: true,
@@ -61,6 +62,7 @@ const AddProduct = () => {
         },
       });
       toast.success(response.data.message);
+      setLoader(false);
     } catch (err) {
       toast.error(err.message);
     }
@@ -69,6 +71,7 @@ const AddProduct = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
+      { loader===false? 
       <form
         method="post"
         encType="multipart/form-data"
@@ -149,7 +152,8 @@ const AddProduct = () => {
         >
           Add Product
         </button>
-      </form>
+      </form>:<span class="loader"></span>
+    }
     </div>
   );
 };

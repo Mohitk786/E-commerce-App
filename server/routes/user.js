@@ -6,6 +6,6 @@ const {createProfile,deleteAccount} = require("../controllers/user");
 const {auth, isAdmin, isCustomer} = require("../middlewares/auth");
 
 router.post('/profile', auth, createProfile);
-router.post('/deleteAccount', auth, deleteAccount);
+router.delete('/deleteAccount', auth, deleteAccount);
 
 module.exports = router;

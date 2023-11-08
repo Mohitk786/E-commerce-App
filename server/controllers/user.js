@@ -45,24 +45,15 @@ exports.deleteAccount = async (req,res) => {
         //get id
         const id = req.user.id;
         //validation
-        const userDetails= await User.findById({_id:id});
-        if(!userDetails){
-            return res.status( 404).json({
-                success:false,
-                message:"User Not found",
-            });
-        }
+        const user= await User.findById({_id:id});
 
-        await Profile.findByIdAndDelete({_id:userDetails.additionalDetails});
-
-        //delete Account
+        await Profile.findByIdAndDelete({_id:user.additionalDetails});
         await User.findByIdAndDelete({_id:id});
 
-        return res.status(200).json({
+        return res.clearCookie("_ACCESSCARD").status(200).json({
             success:true,
             message:"User deleted successfully",
         })
-
 
     }catch(err){
             return res.status(400).json({

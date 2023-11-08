@@ -75,7 +75,7 @@ exports.addItem = async (req, res) => {
         console.log(`Error in adding items: ${err.message}`);
         return res.status(500).json({
             success: false,
-            message: `Error occurred: ${err.message}`
+            message: `Error occurred: ${err}`
         });
     }
 };

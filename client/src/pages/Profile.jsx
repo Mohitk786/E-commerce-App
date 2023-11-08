@@ -43,13 +43,21 @@ export const Profile = () => {
       };
 
       const deleteHandler = async() => {
+          try{
+            await axios.delete(`${API_BASE}/deleteAccount`, {withCredentials:true});
+            toast.success("User Deleted Successfully");
+            navigate('/signup');
 
+          }catch(err){
+            toast.error(err.response.data.message);
+          }
       }
 
       const LogoutHandler = async() => {
         try{
-          const res = await axios.get(`${API_BASE}/logout`);
-          toast.promise(res.response.data.message);
+          const res = await axios.get(`${API_BASE}/logout`, {withCredentials:true});
+          console.log(res.data.message);
+          toast.error(res.data.message);
           navigate('/login')
         }catch(err){
             toast.error(err.response.data.message);

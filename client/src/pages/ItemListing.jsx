@@ -12,9 +12,7 @@ export const ItemListing = () => {
   const getData = async (params) => {
     try {
       const response = await axios.get(`${API_BASE}/Items/${params}`, { withCredentials: true });
-      console.log(response.data);
       setData(response.data.items);
-
     } catch (err) {
       console.log('Something went wrong', err.message);
     }

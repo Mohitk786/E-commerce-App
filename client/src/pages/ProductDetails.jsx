@@ -2,21 +2,52 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import { API_BASE } from '../constants/data';
 import axios from 'axios';
+import toast from 'react-hot-toast'
 
 const ProductDetails = () => {
     
     const [data, setData] = useState([]);
     const [param, setParam] = useState('');
+    const [added, setAdded] = useState(false);
+
+
+  const addToCart = async(params) => {
+    setAdded(false);
+    try{
+      if(params){
+        await axios.put(`${API_BASE}/cart/addToCart/${params}`,null, {withCredentials: true});
+        toast.success("Item added to Cart");
+        setAdded(true);
+      }
+    }catch(err){
+      toast.error(err.response.data.message);
+    }
+  }
+
+  const removeFromCart = async(params) => {
+    try{
+      if(params){
+        await axios.put(`${API_BASE}/cart/removeFromCart/${params}`,null, {withCredentials: true});
+        toast.success("Item Removed from Cart");
+        setAdded(false);
+      }
+    }catch(err){
+      toast.error(err.response.data.message);
+    }
+  }
+
 
     const getData = async (params) => {
         try {
           const response = await axios.get(`${API_BASE}/productDetails/${params}`, { withCredentials: true });
           setData(response.data.product);
+          console.log(response.data.product);
     
         } catch (err) {
           console.log('Something went wrong', err.message);
         }
       };
+
     
       useEffect(() => {
         const url = window.location.href;
@@ -33,8 +64,7 @@ const ProductDetails = () => {
       }, [param]);
 
       let thumbnail = data.thumbnail; 
-      console.log(thumbnail);
-      console.log(data.thumbnail);
+     
       if (thumbnail && thumbnail.includes('upload/')) {
         const split =  thumbnail.split('upload/');
         thumbnail = split[0]+'/upload/'+split[1];
@@ -64,9 +94,23 @@ const ProductDetails = () => {
                 </div>
 
                 <div>
-                <button className='bg-slate-800 hover:bg-slate-900 py-2 px-4 text-white rounded-lg'>
+                {/* <button className='bg-slate-800 hover:bg-slate-900 py-2 px-4 text-white rounded-lg'
+                onClick={()=>addToCart(data._id)}
+                >
                     Add To Cart
-                </button>
+                </button> */}
+
+          <button
+          className="text-gray-700 border-2 border-gray-700 rounded-full font-semibold 
+          text-[12px] p-1 px-3 uppercase 
+          hover:bg-gray-700
+          hover:text-white transition duration-300 ease-in"
+          onClick={()=>  added === false?addToCart(param):removeFromCart(param)}>
+           { added === false ? "Add to Cart" : "Remove From Cart" }
+          </button>
+        
+                
+
                 </div>
             </div>
             <div className='w-[50%] flex items-center justify-center'>

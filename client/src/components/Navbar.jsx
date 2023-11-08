@@ -71,10 +71,13 @@ const Navbar = () => {
               )}
             </div>
           </NavLink>
+        {
+          !document.cookie ?
           <BiLogInCircle
             onClick={() => navigate('/login')}
             className="text-slate-800 text-2xl cursor-pointer"
-          />
+          /> : ""
+        }
         </div>
       </nav>
     </div>
